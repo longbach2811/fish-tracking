@@ -7,7 +7,7 @@ import os
 from src.speed_estimator import SpeedEstimator
 from src.video_select import select_video_file
 
-MODEL_PATH = r"D:\fish_tracking\training_yolo\runs\detect\train8\weights\best.pt"
+MODEL_PATH = "model/fish_detector.pt"
 output_folder = "video_records"
 csv_folder = "csv_records"
 
@@ -23,7 +23,7 @@ def process(video_path, show=False, save=False):
     if "csv_record.csv" not in os.listdir(csv_folder):
         csv_filename = f"{csv_folder}/csv_record.csv"
     else:
-        csv_filename = f"{csv_folder}/csv_record_{len(os.listdir(csv_folder))}"
+        csv_filename = f"{csv_folder}/csv_record_{len(os.listdir(csv_folder))}.csv"
     csv_file = open(csv_filename, 'a')
     
     cap = cv2.VideoCapture(video_path)
