@@ -5,11 +5,13 @@ from ultralytics import YOLO
 import os
 
 from src.speed_estimator import SpeedEstimator
-from src.video_select import select_video_file
 
 MODEL_PATH = "model/fish_detector.pt"
 output_folder = "video_records"
 csv_folder = "csv_records"
+
+os.makedirs(output_folder, exist_ok=True)
+os.makedirs(csv_folder, exist_ok=True)
 
 def process(video_path, show=False, save=False):
     model = YOLO(MODEL_PATH)
