@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtCore import QThread, pyqtSignal, QObject, Qt, QMetaObject
 from utils.fish_track import FishTrack
 
 class ProcessingThread(QThread):
@@ -91,6 +91,9 @@ class Ui_MainWindow(object):
         self.processing_thread = ProcessingThread(self.fish_track, video_path, self.video_frame)
         self.processing_thread.start()
 
+    def on_thread_finished(self):
+        # Update UI here safely using invokeMethod
+        QMetaObject.invokeMethod(self, "updateUI", Qt.QueuedConnection)
 
 if __name__ == "__main__":
     import sys
