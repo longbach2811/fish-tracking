@@ -44,8 +44,9 @@ class Ui_MainWindow(object):
         self.txt_ratio.setGeometry(QtCore.QRect(90, 190, 131, 30))
         self.txt_ratio.setObjectName("txt_ratio")
         self.video_frame = QtWidgets.QLabel(self.groupBox)
-        self.video_frame.setGeometry(QtCore.QRect(250, 20, 601, 411))
+        self.video_frame.setGeometry(QtCore.QRect(250, 20, 825, 560))
         self.video_frame.setObjectName("video_frame")
+        self.video_frame.setStyleSheet("border: 1px solid black;")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -73,12 +74,6 @@ class Ui_MainWindow(object):
         self.fish_track = FishTrack(saved_video_name, saved_csv_name, ratio)
         video_path = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")[0]
         self.fish_track.process(video_path, self.video_frame)
-        
-    def closeEvent(self, event):
-        if self.fish_track:
-            # Ensure any running processes in FishTrack are terminated
-            self.process_handler.stop_process()  # You need to implement this method in the FishTrack class
-        event.accept()
 
 
 if __name__ == "__main__":
