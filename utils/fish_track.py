@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from ultralytics import YOLO
 import os
+import time
 
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtCore import Qt
@@ -32,8 +33,8 @@ class FishTrack:
             self.output_path = os.path.join(output_folder, f"{self.saved_video_name}_{count}.avi")
         
         if f"{self.saved_csv_name}.csv" not in os.listdir(csv_folder):
-            self.csv_filename = os.path.join(csv_folder, f"{self.csv_filename}.csv")
-            self.converted_csv_filename = os.path.join(csv_folder, f"converted_{self.csv_filename}.csv")
+            self.csv_filename = os.path.join(csv_folder, f"{self.saved_csv_name}.csv")
+            self.converted_csv_filename = os.path.join(csv_folder, f"converted_{self.saved_csv_name}.csv")
         else:
             count = len([name for name in os.listdir(csv_folder) if name.startswith(self.saved_csv_name)])
             self.csv_filename = os.path.join(csv_folder, f"{self.saved_csv_name}_{count}.csv")
@@ -58,6 +59,7 @@ class FishTrack:
         roi_x, roi_y, roi_w, roi_h = map(int, roi)
 
         fps = int(cap.get(cv2.CAP_PROP_FPS))
+        frame_time = 1 / fps
 
         frame_width = roi_w
         frame_height = roi_h
@@ -68,6 +70,7 @@ class FishTrack:
         track_history = defaultdict(lambda: [])
 
         while cap.isOpened():
+            start_time = time.time()
             success, frame = cap.read()
             if success:
                 frame = frame[int(roi_y):int(roi_y + roi_h),  
@@ -115,13 +118,19 @@ class FishTrack:
                 
                 height, width, channels = annotated_frame.shape
                 bytes_per_line = channels * width
-                q_img = QImage(annotated_frame.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+                q_img = QImage(annotated_frame.data, width, height, bytes_per_line, QImage.Format.Format_RGB888).rgbSwapped()
                 qt_pixmap = QPixmap.fromImage(q_img).scaled(qt_frame.width(), qt_frame.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 qt_frame.setPixmap(qt_pixmap)
                 qt_frame.repaint()
+                
+                elapsed_time = time.time() - start_time
+                sleep_time = max(0, frame_time - elapsed_time)  # Ensure non-negative sleep time
+                time.sleep(sleep_time)
+
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
-                
+            else:
+                break      
         cap.release()
         out.release()
 
