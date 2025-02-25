@@ -9,8 +9,21 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QThread, pyqtSignal
 from utils.fish_track import FishTrack
 
+class ProcessingThread(QThread):
+    finished = pyqtSignal()
+
+    def __init__(self, fish_track, video_path, video_frame):
+        super().__init__()
+        self.fish_track = fish_track
+        self.video_path = video_path
+        self.video_frame = video_frame
+
+    def run(self):
+        self.fish_track.process(self.video_path, self.video_frame)
+        self.finished.emit()
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -72,8 +85,11 @@ class Ui_MainWindow(object):
         saved_csv_name = self.txt_csv_name.text()
         ratio = self.txt_ratio.text()
         self.fish_track = FishTrack(saved_video_name, saved_csv_name, ratio)
-        video_path = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")[0]
-        self.fish_track.process(video_path, self.video_frame)
+
+        video_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")
+        
+        self.processing_thread = ProcessingThread(self.fish_track, video_path, self.video_frame)
+        self.processing_thread.start()
 
 
 if __name__ == "__main__":
