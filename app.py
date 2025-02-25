@@ -43,11 +43,8 @@ class Ui_MainWindow(object):
         self.txt_ratio = QtWidgets.QLineEdit(self.groupBox)
         self.txt_ratio.setGeometry(QtCore.QRect(90, 190, 131, 30))
         self.txt_ratio.setObjectName("txt_ratio")
-        self.video_frame = QtWidgets.QFrame(self.groupBox)
-        self.video_frame.setGeometry(QtCore.QRect(280, 50, 781, 531))
-        self.video_frame.setAutoFillBackground(True)
-        self.video_frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.video_frame.setFrameShadow(QtWidgets.QFrame.Raised)
+        self.video_frame = QtWidgets.QLabel(self.groupBox)
+        self.video_frame.setGeometry(QtCore.QRect(250, 20, 601, 411))
         self.video_frame.setObjectName("video_frame")
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -55,15 +52,13 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Saved video name:"))
         self.label_2.setText(_translate("MainWindow", "Saved csv name:"))
-        self.txt_video_name.setText(_translate("MainWindow", "captured_video.avi"))
-        self.txt_csv_name.setText(_translate("MainWindow", "csv_record.csv"))
+        self.txt_video_name.setText(_translate("MainWindow", "captured_video"))
+        self.txt_csv_name.setText(_translate("MainWindow", "csv_record"))
         self.groupBox.setTitle(_translate("MainWindow", "Process"))
         self.btn_process.setText(_translate("MainWindow", "Process"))
         self.label_3.setText(_translate("MainWindow", "Ratio:"))
@@ -76,8 +71,14 @@ class Ui_MainWindow(object):
         saved_csv_name = self.txt_csv_name.text()
         ratio = self.txt_ratio.text()
         self.fish_track = FishTrack(saved_video_name, saved_csv_name, ratio)
-        video_path = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi)")[0]
-        self.fish_track.process(video_path)
+        video_path = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")[0]
+        self.fish_track.process(video_path, self.video_frame)
+        
+    def closeEvent(self, event):
+        if self.fish_track:
+            # Ensure any running processes in FishTrack are terminated
+            self.process_handler.stop_process()  # You need to implement this method in the FishTrack class
+        event.accept()
 
 
 if __name__ == "__main__":
