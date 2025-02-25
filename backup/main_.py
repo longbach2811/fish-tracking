@@ -5,6 +5,7 @@ from ultralytics import YOLO
 import os
 
 from src.speed_estimator import SpeedEstimator
+from src.video_select import select_video_file
 
 MODEL_PATH = "model/fish_detector.pt"
 output_folder = "video_records"
