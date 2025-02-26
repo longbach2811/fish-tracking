@@ -21,15 +21,14 @@ class MainApp(QtWidgets.QMainWindow):
         super(MainApp, self).__init__()
         loadUi("fish_tracking_ui.ui", self)
         
+        self.btn_process.clicked.connect(self.process_handler)
+    
+    def process_handler(self):
         saved_video_name = self.txt_video_name.text()
         saved_csv_name = self.txt_csv_name.text()
         ratio = self.txt_ratio.text()
         
         self.fish_track = FishTrack(saved_video_name, saved_csv_name, ratio)
-        
-        self.btn_process.clicked.connect(self.process_handler)
-    
-    def process_handler(self):
 
         video_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")
         
