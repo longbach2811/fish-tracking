@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.uic import loadUi
 from PyQt5.QtCore import QThread, pyqtSignal
 from utils.fish_track import FishTrack
 
@@ -25,78 +26,30 @@ class ProcessingThread(QThread):
         self.fish_track.process(self.video_path, self.video_frame)
         self.finished.emit()
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1122, 774)
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(60, 30, 191, 26))
-        self.label.setObjectName("label")
-        self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(60, 70, 171, 26))
-        self.label_2.setObjectName("label_2")
-        self.txt_video_name = QtWidgets.QLineEdit(self.centralwidget)
-        self.txt_video_name.setGeometry(QtCore.QRect(250, 30, 411, 30))
-        self.txt_video_name.setObjectName("txt_video_name")
-        self.txt_csv_name = QtWidgets.QLineEdit(self.centralwidget)
-        self.txt_csv_name.setGeometry(QtCore.QRect(250, 70, 411, 30))
-        self.txt_csv_name.setObjectName("txt_csv_name")
-        self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(20, 120, 1091, 601))
-        self.groupBox.setObjectName("groupBox")
-        self.btn_process = QtWidgets.QPushButton(self.groupBox)
-        self.btn_process.setGeometry(QtCore.QRect(30, 70, 191, 81))
-        self.btn_process.setObjectName("btn_process")
-        self.btn_process.clicked.connect(self.process_handler)
-        self.label_3 = QtWidgets.QLabel(self.groupBox)
-        self.label_3.setGeometry(QtCore.QRect(20, 190, 61, 26))
-        self.label_3.setObjectName("label_3")
-        self.txt_ratio = QtWidgets.QLineEdit(self.groupBox)
-        self.txt_ratio.setGeometry(QtCore.QRect(90, 190, 131, 30))
-        self.txt_ratio.setObjectName("txt_ratio")
-        self.video_frame = QtWidgets.QLabel(self.groupBox)
-        self.video_frame.setGeometry(QtCore.QRect(250, 20, 825, 560))
-        self.video_frame.setObjectName("video_frame")
-        self.video_frame.setStyleSheet("border: 1px solid black;")
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
-
-        self.retranslateUi(MainWindow)
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "Saved video name:"))
-        self.label_2.setText(_translate("MainWindow", "Saved csv name:"))
-        self.txt_video_name.setText(_translate("MainWindow", "captured_video"))
-        self.txt_csv_name.setText(_translate("MainWindow", "csv_record"))
-        self.groupBox.setTitle(_translate("MainWindow", "Process"))
-        self.btn_process.setText(_translate("MainWindow", "Process"))
-        self.label_3.setText(_translate("MainWindow", "Ratio:"))
-    
+class MainApp(QtWidgets.QMainWindow):
     def __init__(self):
-        super(Ui_MainWindow, self).__init__()
+        super(MainApp, self).__init__()
+        loadUi("fish_tracking_ui.ui", self)
         
-    def process_handler(self):
         saved_video_name = self.txt_video_name.text()
         saved_csv_name = self.txt_csv_name.text()
         ratio = self.txt_ratio.text()
+        
         self.fish_track = FishTrack(saved_video_name, saved_csv_name, ratio)
+        
+        self.btn_process.clicked.connect(self.process_handler)
+    
+    def process_handler(self):
 
         video_path, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select video file", "", "Video Files (*.mp4 *.avi, *mov)")
         
         self.processing_thread = ProcessingThread(self.fish_track, video_path, self.video_frame)
         self.processing_thread.start()
-
-
+        
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
+    ui = MainApp()
+    ui.show()
+    app.exec_()
