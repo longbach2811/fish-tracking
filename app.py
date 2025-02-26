@@ -47,7 +47,7 @@ class Ui_MainWindow(object):
         self.groupBox.setGeometry(QtCore.QRect(20, 120, 1091, 601))
         self.groupBox.setObjectName("groupBox")
         self.btn_process = QtWidgets.QPushButton(self.groupBox)
-        self.btn_process.setGeometry(QtCore.QRect(40, 70, 191, 81))
+        self.btn_process.setGeometry(QtCore.QRect(30, 70, 191, 81))
         self.btn_process.setObjectName("btn_process")
         self.btn_process.clicked.connect(self.process_handler)
         self.label_3 = QtWidgets.QLabel(self.groupBox)
