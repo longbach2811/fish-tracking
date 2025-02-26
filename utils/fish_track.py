@@ -132,4 +132,4 @@ class FishTrack:
                 break      
         cap.release()
         out.release()
-
+        self.model.predictor.trackers[0].reset()
