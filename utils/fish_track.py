@@ -121,7 +121,6 @@ class FishTrack:
                 q_img = QImage(annotated_frame.data, width, height, bytes_per_line, QImage.Format.Format_RGB888).rgbSwapped()
                 qt_pixmap = QPixmap.fromImage(q_img).scaled(qt_frame.width(), qt_frame.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
                 qt_frame.setPixmap(qt_pixmap)
-                qt_frame.repaint()
                 
                 elapsed_time = time.time() - start_time
                 sleep_time = max(0, frame_time - elapsed_time)  # Ensure non-negative sleep time
